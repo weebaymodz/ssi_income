@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4285f4">
+    <title>SSI Income Tracker</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>SSI Income Tracker</h1>
+        <div id="auth-status-container">
+            <span id="auth-status">Not signed in</span>
+            <button id="sign-out-button" class="btn-secondary">Sign Out</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Authentication Section -->
+        <section id="auth-container" class="auth-section">
+            <div class="card">
+                <h2>Account Access</h2>
+                <form id="auth-form" class="sign-in-mode">
+                    <div class="form-group">
+                        <label for="auth-email">Email</label>
+                        <input type="email" id="auth-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="auth-password">Password</label>
+                        <input type="password" id="auth-password" required>
+                    </div>
+                    <div id="auth-error" class="error-message" style="display: none;"></div>
+                    <button type="submit" id="sign-in-button" class="btn-primary">Sign In</button>
+                    <button type="submit" id="sign-up-button" class="btn-primary" style="display: none;">Sign Up</button>
+                </form>
+                <div class="auth-toggle-container">
+                    <button id="auth-toggle" class="btn-link">Need an account? Sign up</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Income Summary Section -->
+        <section class="income-summary app-content">
+            <div class="card">
+                <h2>Income Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="label">SSI Income</span>
+                        <span class="value" id="ssi-amount">$1,798.00</span>
+                        <span class="fixed-tag">Fixed</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Job Income</span>
+                        <span class="value" id="job-amount">$0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Job Income Limit</span>
+                        <span class="value">$1,600.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Remaining Allowed</span>
+                        <span class="value" id="remaining-amount">$1,600.00</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="income-entry app-content">
+            <div class="card">
+                <h2>Add Income</h2>
+                <form id="income-form">
+                    <div class="form-group">
+                        <label for="income-type">Income Type</label>
+                        <select id="income-type" required>
+                            <option value="ssi">SSI Income</option>
+                            <option value="job">Job Income</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="income-amount">Amount ($)</label>
+                        <input type="number" id="income-amount" min="0" step="0.01" required>
+                        <div id="fixed-amount-message" class="info-message" style="display: none;">
+                            SSI income is fixed at $1,798.00 per month
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="income-date">Date</label>
+                        <input type="date" id="income-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="income-description">Description (Optional)</label>
+                        <input type="text" id="income-description">
+                    </div>
+                    <button type="submit" class="btn-primary">Add Income</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="storage-options app-content">
+            <div class="card">
+                <h2>Storage Options</h2>
+                <div class="storage-selector">
+                    <p>Choose where to store your data:</p>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="storage-local" name="storage-type" value="localStorage">
+                            <label for="storage-local">Local Storage</label>
+                            <span class="storage-info">Data stored in your browser only</span>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="storage-indexeddb" name="storage-type" value="indexedDB">
+                            <label for="storage-indexeddb">IndexedDB</label>
+                            <span class="storage-info">Enhanced browser storage with better performance</span>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="storage-firestore" name="storage-type" value="firestore">
+                            <label for="storage-firestore">Firebase Firestore</label>
+                            <span class="storage-info">Cloud document storage</span>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="storage-realtimedb" name="storage-type" value="realtimeDB" checked>
+                            <label for="storage-realtimedb">Firebase Realtime Database (Default)</label>
+                            <span class="storage-info">Real-time cloud database with cross-device sync</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="income-history app-content">
+            <div class="card">
+                <h2>Income History</h2>
+                <div class="table-container">
+                    <table id="income-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="income-entries">
+                            <!-- Income entries will be added here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="no-income-message" class="empty-state">
+                    <span class="material-icons">info</span>
+                    <p>No income entries yet. Add your first income above.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="income-visualization app-content">
+            <div class="card">
+                <h2>Income Visualization</h2>
+                <div class="progress-container">
+                    <div class="progress-label">Job Income Limit Usage</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="limit-progress-bar"></div>
+                    </div>
+                    <div class="progress-text" id="limit-progress-text">0%</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="income-chart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 SSI Income Tracker</p>
+    </footer>
+
+    <div id="notification" class="notification">
+        <span id="notification-message"></span>
+        <button id="notification-close" class="notification-close">&times;</button>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyActqft7QnXQjte7NNtrWsomFc5g6opV7g",
+            authDomain: "ssiincome-51a08.firebaseapp.com",
+            projectId: "ssiincome-51a08",
+            storageBucket: "ssiincome-51a08.appspot.com",
+            messagingSenderId: "277853389267",
+            appId: "1:277853389267:web:41557a575999d220ecef26",
+            measurementId: "G-YEJ9DCPK0Z",
+            databaseURL: "https://ssiincome-51a08-default-rtdb.firebaseio.com"
+        };
+
+        // Initialize Firebase
+        try {
+            if (firebase.apps.length === 0) {
+                firebase.initializeApp(firebaseConfig);
+                console.log('Firebase initialized successfully');
+            } else {
+                console.log('Firebase already initialized');
+            }
+        } catch (error) {
+            console.error('Error initializing Firebase:', error);
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
+
+    <!-- Application scripts -->
+    <script src="js/db.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/indexedDB.js"></script>
+    <script src="js/firestore.js"></script>
+    <script src="js/realtimeDB.js"></script>
+    <script src="js/storageManager.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dbTest.js"></script>
+
+    <script>
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('Service Worker registered', reg))
+                .catch(err => console.log('Service Worker registration failed', err));
+        }
+    </script>
+</body>
+</html>
